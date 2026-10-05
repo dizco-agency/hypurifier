@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hypurifier × DIZCO — Proposal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+<meta name="color-scheme" content="light dark">
+<style>
+:root{
+  --font-sans:"Poppins",system-ui,-apple-system,sans-serif;
+  --surface:#ffffff;--surface-alt:#fafaf8;
+  --ink:#0a0a0a;--ink-body:#3d3d3b;--ink-muted:#6e6d6a;
+  --line:#e8e7e3;--mute:#d6d5d1;
+  --orange:#ff5a00;--orange-soft:#ffeee4;--orange-line:#ffd9c4;
+  --green:#1e9e5a;--red:#c8341f;
+  --green-soft:#e6f4ec;--red-soft:#fbe4e0;
+  --space-1:6px;--space-2:9px;--space-3:14px;--space-4:20px;--space-5:26px;--space-6:40px;--space-7:56px;--space-8:88px;
+  --radius-sm:5px;--radius-md:12px;--radius-lg:14px;--radius-pill:999px;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --surface:#0f0f0e;--surface-alt:#171716;
+  --ink:#f7f6f3;--ink-body:#c9c8c4;--ink-muted:#8a8984;
+  --line:#2b2b28;--mute:#3a3a37;
+  --orange:#ff6b1a;--orange-soft:#2b1509;--orange-line:#4a2611;
+  --green:#35b872;--red:#e0604a;--green-soft:#11281b;--red-soft:#2e1410;color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --surface:#0f0f0e;--surface-alt:#171716;
+  --ink:#f7f6f3;--ink-body:#c9c8c4;--ink-muted:#8a8984;
+  --line:#2b2b28;--mute:#3a3a37;
+  --orange:#ff6b1a;--orange-soft:#2b1509;--orange-line:#4a2611;
+  --green:#35b872;--red:#e0604a;--green-soft:#11281b;--red-soft:#2e1410;color-scheme:dark;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-sans);-webkit-font-smoothing:antialiased;background:var(--surface);color:var(--ink)}
+b,strong{font-weight:600}
+.deck{height:100vh;overflow-y:scroll;scroll-snap-type:y mandatory;scroll-behavior:smooth}
+.panel{min-height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:center;padding:var(--space-7) var(--space-8);position:relative;background:var(--surface)}
+.panel:nth-child(even){background:var(--surface-alt)}
+.inner{width:100%;max-width:1500px;margin:0 auto}
+.split{display:flex;gap:68px;align-items:center}
+.sinfo{width:420px;flex-shrink:0}
+.snum{font-size:13px;font-weight:600;color:var(--orange);letter-spacing:.18em;text-transform:uppercase;line-height:1.2}
+.stitle{font-size:40px;font-weight:600;margin:12px 0 18px;line-height:1.1;letter-spacing:-.02em;color:var(--ink)}
+.sdesc{font-size:17.5px;color:var(--ink-body);line-height:1.6;font-weight:400}
+.sdesc b{color:var(--ink)}
+.sdesc p{margin:0}.sdesc p+p{margin-top:var(--space-2)}
+.sview{flex:1;min-width:0}
+.ss{display:block}.ss+.ss{margin-top:var(--space-1)}
+.num,.v,.big,.tn,.axis{font-variant-numeric:tabular-nums}
+/* cover */
+.panel.cover{background:#0a0a0a;color:#fff;overflow:hidden}
+.cover::after{content:"";position:absolute;right:-110px;top:-110px;width:380px;height:380px;background:var(--orange);transform:rotate(45deg)}
+.cover::before{content:"";position:absolute;left:-130px;bottom:-150px;width:380px;height:380px;border:30px solid rgba(255,255,255,.07);border-radius:50%}
+.clogo{height:42px;position:relative;z-index:2;margin-bottom:var(--space-6)}
+.ckick{font-size:14px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--orange);position:relative;z-index:2}
+.ctitle{font-size:82px;font-weight:600;line-height:1.02;margin:20px 0 12px;position:relative;z-index:2;letter-spacing:-.035em}
+.cperiod{font-size:28px;font-weight:400;color:#c9c8c4;position:relative;z-index:2}
+.cmeta{font-size:16px;line-height:1.7;color:#8a8984;margin-top:28px;position:relative;z-index:2}
+.cscroll{position:absolute;bottom:44px;left:88px;font-size:13px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:#8a8984;display:flex;align-items:center;gap:12px;z-index:2}
+.cscroll .arw{width:22px;height:22px;border-right:2px solid var(--orange);border-bottom:2px solid var(--orange);transform:rotate(45deg);animation:bounce 1.5s infinite}
+@keyframes bounce{0%,100%{transform:rotate(45deg) translate(0,0)}50%{transform:rotate(45deg) translate(5px,5px)}}
+/* page head */
+.mhead{text-align:center;margin-bottom:38px}
+.mhead .k{font-size:13px;font-weight:600;color:var(--orange);letter-spacing:.18em;text-transform:uppercase;line-height:1.2}
+.mhead .t{font-size:42px;font-weight:600;margin-top:12px;letter-spacing:-.025em;line-height:1.08;color:var(--ink)}
+.mhead .d{font-size:17px;color:var(--ink-muted);margin-top:10px;font-weight:400;line-height:1.5}
+/* metric cards */
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-4)}
+.mcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:28px 30px}
+.mcard .l{font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:14px;line-height:1.2}
+.mcard .v{font-size:46px;font-weight:600;line-height:1;letter-spacing:-.035em}
+.mcard .s{font-size:15px;color:var(--ink-muted);margin-top:11px;font-weight:400;line-height:1.45}
+.v.navy{color:var(--ink)}.v.green{color:var(--green)}.v.orange{color:var(--orange)}.v.red{color:var(--red)}.v.teal{color:var(--ink)}
+/* callouts & helpers */
+.hl{background:var(--orange-soft);border:1px solid var(--orange-line);border-radius:var(--radius-md);padding:18px 22px;font-size:16.5px;line-height:1.55;color:var(--ink-body);font-weight:400}
+.hl b{color:var(--ink)}
+.hint{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:400;color:var(--ink-muted);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-pill);padding:7px 14px;margin-top:var(--space-3)}
+.cap{font-size:13px;color:var(--ink-muted);margin-top:12px;line-height:1.45}
+.tip{position:fixed;pointer-events:none;background:var(--ink);color:var(--surface);border-radius:8px;padding:10px 14px;font-size:14px;line-height:1.5;opacity:0;transform:translate(-50%,-100%);transition:opacity .1s;white-space:nowrap;z-index:350;font-weight:400}
+.tip b{font-weight:600}.tip .o{color:var(--orange)}
+.axis{font-size:13px;fill:var(--ink-muted)}
+.bar{cursor:pointer;transition:opacity .15s}.bar:hover{opacity:.78}
+/* audit */
+.agrid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-3)}
+.acard{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-md);padding:18px 20px;cursor:pointer;transition:border-color .15s,transform .15s;position:relative}
+.acard:hover{border-color:var(--ink-muted);transform:translateY(-2px)}
+.acard.sel{border-color:var(--orange)}
+.acard .ch{font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);line-height:1.2}
+.acard .big{font-size:32px;font-weight:600;margin:8px 0 4px;letter-spacing:-.03em;line-height:1;color:var(--ink)}
+.acard .sm{font-size:13px;color:var(--ink-muted);font-weight:400;line-height:1.45}
+.chipst{display:inline-block;font-size:11.5px;font-weight:600;padding:3px 10px;border-radius:var(--radius-pill);margin-top:10px;letter-spacing:.09em;text-transform:uppercase}
+.st-red{background:var(--red-soft);color:var(--red)}.st-amb{background:var(--orange-soft);color:var(--orange)}.st-grn{background:var(--green-soft);color:var(--green)}
+.adetail{margin-top:var(--space-3);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-md);padding:16px 20px;font-size:15.5px;line-height:1.5;color:var(--ink-body);min-height:96px;display:flex;gap:18px;align-items:flex-start}
+.adetail b{color:var(--ink)}
+.adetail .atx{flex:1}
+.tline{display:flex;gap:0;margin-top:22px;position:relative}
+.tline::before{content:"";position:absolute;left:8px;right:8px;top:8px;height:2px;background:var(--line)}
+.tstep{flex:1;position:relative;padding-top:26px;font-size:13px;color:var(--ink-muted);line-height:1.45}
+.tstep::before{content:"";position:absolute;top:2px;left:0;width:14px;height:14px;border-radius:50%;background:var(--surface);border:2px solid var(--ink)}
+.tstep:last-child::before{border-color:var(--orange);background:var(--orange)}
+.tstep b{display:block;color:var(--ink);font-size:15.5px;font-weight:600;letter-spacing:-.01em}
+/* filters */
+.fbtns{display:flex;gap:var(--space-2);flex-wrap:wrap;margin-bottom:18px}
+.fbtn{font-family:inherit;font-size:13px;font-weight:500;padding:8px 15px;border-radius:var(--radius-pill);border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.fbtn.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+/* pillars */
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-3)}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-md);padding:18px 20px;cursor:pointer;transition:border-color .15s,transform .15s}
+.pcard:hover{transform:translateY(-2px);border-color:var(--ink-muted)}
+.pcard.sel{border-color:var(--orange)}
+.pcard .ic{width:36px;height:36px;border-radius:var(--radius-sm);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600;color:var(--surface);background:var(--ink);margin-bottom:12px}
+.pcard.sel .ic{background:var(--orange);color:#fff}
+.pcard .pt{font-size:19px;font-weight:600;letter-spacing:-.02em;color:var(--ink)}
+.pcard .ps{font-size:13px;color:var(--ink-muted);margin-top:4px;line-height:1.45}
+.pdet{margin-top:var(--space-3);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-md);padding:16px 20px;display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.pdet .h{font-size:11.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--orange);margin-bottom:6px}
+.pdet .x{font-size:15.5px;line-height:1.5;color:var(--ink-body)}
+.flow{display:flex;align-items:stretch;gap:8px;margin-top:18px}
+.fnode{flex:1;background:var(--surface);border:1px solid var(--line);color:var(--ink);border-radius:var(--radius-md);padding:12px 10px;text-align:center;font-size:15px;font-weight:600;line-height:1.3;letter-spacing:-.01em}
+.fnode small{display:block;font-weight:400;color:var(--ink-muted);font-size:13px;margin-top:3px;letter-spacing:0}
+.fnode.o{background:var(--orange);border-color:var(--orange);color:#fff}.fnode.o small{color:#fff;opacity:.85}
+.farr{display:flex;align-items:center;color:var(--ink-muted);font-weight:400;font-size:20px}
+/* stats & case */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-3)}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-md);padding:18px 16px;text-align:center}
+.stat .l{font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:9px;line-height:1.2}
+.stat .v{font-size:34px;font-weight:600;line-height:1;letter-spacing:-.03em}
+.stat .s{font-size:13px;color:var(--ink-muted);margin-top:7px}
+.phasebox{margin-top:var(--space-3);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-md);padding:14px 20px;font-size:15.5px;line-height:1.5;color:var(--ink-body);min-height:72px}
+.phasebox b{color:var(--ink)}
+/* months */
+.mtabs{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.mtab{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-md);padding:16px 18px;cursor:pointer;transition:border-color .15s}
+.mtab:hover{border-color:var(--ink-muted)}
+.mtab.sel{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.mtab .mn{font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;opacity:.65}
+.mtab.sel .mn{color:var(--orange);opacity:1}
+.mtab .mt{font-size:21px;font-weight:600;margin-top:4px;letter-spacing:-.02em}
+.mdet{margin-top:var(--space-3);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-md);padding:20px 24px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.mdet .h{font-size:11.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--orange);margin-bottom:8px}
+.mdet ul{padding-left:18px;font-size:15.5px;line-height:1.5;color:var(--ink-body)}
+.mdet li+li{margin-top:var(--space-1)}
+.gate{margin-top:var(--space-3);font-size:15.5px;color:var(--ink-body);line-height:1.5}
+.gate b{color:var(--ink)}
+/* tiers & calc */
+.tgrid{display:flex;gap:var(--space-4)}
+.tier{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:24px 26px;cursor:pointer;transition:border-color .15s;position:relative}
+.tier.sel{border-color:var(--orange);outline:1px solid var(--orange)}
+.tier .badge{position:absolute;top:-12px;right:22px;background:var(--orange);color:#fff;font-size:11.5px;font-weight:600;letter-spacing:.09em;padding:4px 12px;border-radius:var(--radius-pill)}
+.tier .tname{font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted)}
+.tier .tn{font-size:42px;font-weight:600;margin:8px 0 2px;letter-spacing:-.035em;line-height:1;color:var(--ink)}
+.tier .tn span{font-size:16px!important;color:var(--ink-muted)!important;font-weight:400!important;letter-spacing:0}
+.tier .ts{font-size:13px;color:var(--ink-muted)}
+.tier ul{margin-top:12px;padding-left:18px;font-size:15.5px;line-height:1.5;color:var(--ink-body)}
+.tier li+li{margin-top:4px}
+.calc{margin-top:var(--space-3);display:flex;gap:var(--space-3);align-items:stretch}
+.plan{flex:1;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-md);padding:14px 18px;cursor:pointer}
+.plan.sel{border-color:var(--ink)}
+.plan .pn{font-size:15.5px;font-weight:600;letter-spacing:-.01em;color:var(--ink)}
+.plan .pd{font-size:13px;color:var(--ink-muted);margin-top:4px;line-height:1.45}
+.total{flex:1.1;background:var(--ink);color:var(--surface);border-radius:var(--radius-md);padding:14px 20px}
+.total .l{font-size:11.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--orange)}
+.total .v{font-size:34px;font-weight:600;margin-top:4px;letter-spacing:-.03em;line-height:1.1}
+.total .s{font-size:13px;opacity:.7;margin-top:4px;line-height:1.45}
+/* terms */
+.terms{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--space-2) var(--space-5);margin-top:6px}
+.term{display:flex;gap:14px;font-size:15.5px;line-height:1.5;color:var(--ink-body);background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-md);padding:14px 18px}
+.term .n{flex-shrink:0;min-width:24px;height:24px;border-radius:50%;background:var(--orange);color:#fff;font-weight:600;display:flex;align-items:center;justify-content:center;font-size:13px;margin-top:1px}
+.term b{color:var(--ink)}
+/* closing */
+.next{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-3)}
+.nx{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:var(--radius-lg);padding:22px}
+.nx .n{font-size:13px;font-weight:600;color:var(--orange);letter-spacing:.18em}
+.nx .t{font-size:20px;font-weight:600;margin-top:8px;letter-spacing:-.02em}
+.nx .d{font-size:15.5px;color:#c9c8c4;margin-top:8px;line-height:1.5}
+/* nav dots */
+.dots{position:fixed;right:28px;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:11px;z-index:60}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--mute);border:none;cursor:pointer;transition:.2s;padding:0}
+.dot:hover{background:var(--ink-muted);transform:scale(1.25)}
+.dot.on{background:var(--orange);transform:scale(1.45)}
+/* screenshots + lightbox */
+.shots{display:flex;gap:10px;flex-shrink:0}
+.shot{width:150px;height:94px;border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--line);cursor:zoom-in;position:relative;background:var(--surface)}
+.shot img{width:100%;height:100%;object-fit:cover;object-position:top}
+.shot::after{content:"\2922";position:absolute;right:6px;bottom:6px;width:22px;height:22px;border-radius:50%;background:rgba(10,10,10,.78);color:#fff;font-size:12px;display:flex;align-items:center;justify-content:center}
+.imglb{position:fixed;inset:0;background:rgba(10,10,10,.93);z-index:300;display:none;align-items:center;justify-content:center;flex-direction:column;padding:30px}
+.imglb.open{display:flex}
+.imgwrap{max-width:92vw;max-height:80vh;overflow:hidden;border-radius:8px;background:#fff;cursor:zoom-in;touch-action:none}
+.imgwrap.z{cursor:grab}.imgwrap.z.drag{cursor:grabbing}
+.imgwrap img{display:block;max-width:92vw;max-height:80vh;transition:transform .22s cubic-bezier(.22,1,.36,1);user-select:none;-webkit-user-drag:none}
+.imgcap{color:#c9c8c4;font-size:14px;margin-top:14px;text-align:center}
+.imgtools{display:flex;gap:7px;margin-top:10px}
+.imgtools button{font-family:inherit;font-weight:500;font-size:14px;background:rgba(255,255,255,.12);color:#fff;border:none;border-radius:9px;padding:8px 15px;cursor:pointer}
+.imgtools button:hover{background:rgba(255,255,255,.22)}
+.imglbclose{position:absolute;top:18px;right:22px;width:42px;height:42px;border-radius:50%;background:rgba(255,255,255,.12);border:none;font-size:22px;color:#fff;cursor:pointer;font-family:inherit}
+.imglb.tall .imgwrap{overflow-y:auto;overflow-x:hidden;cursor:default;max-height:84vh}
+.imglb.tall .imgwrap img{max-height:none;max-width:none;transform:none!important}
+.imglb.tall .imgtools{display:none}
+/* LP portfolio */
+.lpgrid{display:grid;grid-template-columns:1.7fr 1fr 1fr 1fr;gap:var(--space-3);align-items:stretch}
+.lpc{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s,transform .15s}
+.lpc:hover{border-color:var(--orange);transform:translateY(-2px)}
+.lpc .th{height:340px;overflow:hidden;cursor:zoom-in;position:relative;background:var(--surface-alt);border-bottom:1px solid var(--line)}
+.lpc .th img{width:100%;height:100%;object-fit:cover;object-position:top;display:block}
+.lpc .th::after{content:"Lihat full halaman";position:absolute;left:10px;bottom:10px;font-size:11.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:#fff;background:rgba(10,10,10,.82);padding:5px 11px;border-radius:var(--radius-pill)}
+.lpc .bd{padding:14px 16px 16px;display:flex;flex-direction:column;gap:6px;flex:1}
+.lpc .tg{font-size:11.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--orange)}
+.lpc .nm{font-size:18px;font-weight:600;letter-spacing:-.02em;color:var(--ink)}
+.lpc .ds{font-size:13px;color:var(--ink-muted);line-height:1.45;font-weight:400}
+.lpc .lk{margin-top:auto;font-size:13px;font-weight:500;color:var(--ink);text-decoration:none;border-top:1px solid var(--line);padding-top:10px}
+.lpc .lk:hover{color:var(--orange)}
+@media(max-width:900px){
+  .deck{scroll-snap-type:none}
+  .panel{min-height:auto;padding:44px 22px;justify-content:flex-start}
+  .inner{max-width:100%}
+  .split{flex-direction:column;gap:26px;align-items:stretch}
+  .sinfo{width:100%}.sview{width:100%}
+  .ctitle{font-size:48px}.cperiod{font-size:23px}.cmeta{font-size:15px}.cscroll{display:none}
+  .stitle{font-size:32px}.sdesc{font-size:17px}
+  .mhead{margin-bottom:26px}.mhead .t{font-size:33px}
+  .mgrid,.agrid{grid-template-columns:repeat(2,1fr);gap:14px}
+  .mcard{padding:22px 24px}.mcard .v{font-size:38px}
+  .stats{grid-template-columns:repeat(2,1fr)}.stat .v{font-size:30px}
+  .pgrid,.mtabs{grid-template-columns:repeat(2,1fr)}
+  .pdet,.mdet{grid-template-columns:1fr}
+  .tgrid,.calc{flex-direction:column}
+  .terms,.next{grid-template-columns:1fr}
+  .flow{flex-direction:column}.farr{justify-content:center;transform:rotate(90deg)}
+  .tier .tn{font-size:38px}
+  .dots{display:none}
+  .lpgrid{grid-template-columns:1fr 1fr}.lpc.b2b{grid-column:1/-1}.lpc .th{height:260px}
+}
+@media(max-width:600px){
+  .panel{padding:34px 16px}
+  .ctitle{font-size:38px}.ckick{font-size:12px;letter-spacing:.2em}.cperiod{font-size:19px}.cmeta{font-size:14px}.clogo{height:32px;margin-bottom:28px}
+  .stitle{font-size:26px}.sdesc{font-size:16px}
+  .mhead .t{font-size:27px}.mhead .d{font-size:15px}
+  .mgrid,.agrid,.pgrid,.mtabs,.lpgrid{grid-template-columns:1fr}
+  .stats{grid-template-columns:1fr!important}
+  .mcard .v{font-size:36px}.stat .v{font-size:28px}
+  .hl{font-size:15.5px;padding:16px 18px}
+  .tline{flex-direction:column;gap:12px}.tline::before{display:none}.tstep{padding-top:0;padding-left:26px}
+  .adetail{flex-direction:column}.shot{width:130px;height:82px}
+  .imglbclose{top:12px;right:14px;width:40px;height:40px}
+  .lpc .th{height:240px}
+}
+
+/* portfolio proof */
+.pfgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-3)}
+.pf{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:14px 18px;display:flex;flex-direction:column;gap:7px}
+.pf .hd{display:flex;align-items:center;gap:10px}
+.pf .lg{width:36px;height:36px;border-radius:50%;overflow:hidden;flex-shrink:0;border:1px solid var(--line);background:#fff}
+.pf .lg img{width:100%;height:100%;object-fit:cover;display:block}
+.pf .nm{font-size:15.5px;font-weight:600;letter-spacing:-.01em;color:var(--ink);line-height:1.2}
+.pf .ind{font-size:11.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-muted)}
+.pf .st{font-size:34px;font-weight:600;letter-spacing:-.03em;line-height:1;color:var(--orange);font-variant-numeric:tabular-nums;margin-top:2px}
+.pf .ds{font-size:13px;color:var(--ink-body);line-height:1.45}
+.pf .pr{font-size:12.5px;color:var(--ink-muted)}
+.pf .ba{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:auto}
+.pf .ba div{border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;cursor:zoom-in;background:#fff}
+.pf .ba div.af{border-color:var(--orange)}
+.pf .ba span{display:block;font-size:11px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-muted);padding:4px 7px;border-bottom:1px solid var(--line);background:var(--surface)}
+.pf .ba div.af span{color:var(--orange)}
+.pf .ba img{width:100%;height:50px;object-fit:cover;object-position:top left;display:block}
+.pf .tl{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:auto}
+.pf .tl div{border:1px solid var(--line);border-radius:var(--radius-sm);padding:8px;text-align:center}
+.pf .tl b{display:block;font-size:19px;font-weight:600;letter-spacing:-.02em;color:var(--ink);font-variant-numeric:tabular-nums}
+.pf .tl small{font-size:11px;color:var(--ink-muted);line-height:1.3;display:block;margin-top:2px}
+.pf.sum{background:var(--ink);border-color:var(--ink);color:var(--surface);justify-content:center}
+.pf.sum .st{color:var(--orange);font-size:46px;letter-spacing:-.035em}
+.pf.sum .ds{color:var(--surface);opacity:.75;font-size:15.5px}
+.pf.sum .ind{color:var(--orange)}
+@media(max-width:900px){.pfgrid{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.pfgrid{grid-template-columns:1fr}}
+
+.tier .tq{display:grid;grid-template-columns:1fr 1.25fr;gap:6px 18px;margin-top:14px}
+.tier .tq div{font-size:15.5px;color:var(--ink-body);line-height:1.4}
+.tier .tq b{font-size:20px;font-weight:600;color:var(--ink);letter-spacing:-.02em;margin-right:7px;font-variant-numeric:tabular-nums}
+.tier .tq .tx{grid-column:1/-1;font-size:14px;color:var(--ink-muted)}
+.tier .tnote{font-size:12.5px;color:var(--ink-muted);margin-top:8px;line-height:1.4}
+.tier .tinc{margin-top:14px;padding-top:12px;border-top:1px solid var(--line)}
+.tier .tinc .h{font-size:11.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--orange);margin-bottom:6px}
+.tier .tinc ul{margin:0;padding-left:18px;font-size:13.5px;line-height:1.45;color:var(--ink-body);columns:2;column-gap:18px}
+.tier .tinc li+li{margin-top:2px}
+@media(max-width:600px){.tier .tinc ul{columns:1}}
+.total .was{font-size:18px;font-weight:400;letter-spacing:0;opacity:.55;margin-left:12px;text-decoration:line-through;text-decoration-thickness:1.5px}
+.total .off{display:inline-block;vertical-align:middle;margin-left:10px;font-size:11.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:#fff;background:var(--orange);padding:4px 10px;border-radius:var(--radius-pill)}
+.total .s ul{margin:6px 0 0;padding-left:16px}.total .s li{line-height:1.45}.total .s li+li{margin-top:2px}.total .s li::marker{color:var(--orange)}
+.phasebox .pbh{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:4px}.phasebox .pm{font-size:12.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted)}.phasebox .pv{font-size:24px;font-weight:600;letter-spacing:-.03em;color:var(--orange);font-variant-numeric:tabular-nums}.phasebox .pi{font-size:13px;color:var(--ink-muted)}
+
+/* competitor ads */
+.adgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--space-3);align-items:start}
+.adc{display:flex;flex-direction:column;gap:8px}
+.adc .im{border:1px solid var(--line);border-radius:var(--radius-lg);overflow:hidden;cursor:zoom-in;background:#fff}
+.adc .im img{width:100%;height:auto;display:block}
+.adc .nm{font-size:15px;font-weight:600;letter-spacing:-.01em;color:var(--ink)}
+.adc .tg{font-size:12.5px;color:var(--ink-muted);line-height:1.4}
+.adtake{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--space-3);margin-top:20px}
+.adtake div{border-top:2px solid var(--orange);padding-top:10px;font-size:14.5px;color:var(--ink-body);line-height:1.45}
+.adtake b{display:block;font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);margin-bottom:4px}
+@media(max-width:900px){.adgrid{grid-template-columns:1fr 1fr}.adtake{grid-template-columns:1fr}}
+
+/* affiliate proof */
+.afgrid{display:grid;grid-template-columns:1fr 1fr;gap:var(--space-4)}
+.afc{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-lg);padding:18px 20px;display:flex;flex-direction:column;gap:12px}
+.afc .ind{font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted)}
+.afc .hd{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
+.afc .st{font-size:38px;font-weight:600;letter-spacing:-.03em;line-height:1;color:var(--orange);font-variant-numeric:tabular-nums}
+.afc .up{font-size:13px;font-weight:500;color:var(--green)}
+.afc .ms{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.afc .ms div{border:1px solid var(--line);border-radius:var(--radius-sm);padding:8px 10px}
+.afc .ms b{display:block;font-size:19px;font-weight:600;letter-spacing:-.02em;color:var(--ink);font-variant-numeric:tabular-nums}
+.afc .ms small{font-size:11.5px;color:var(--ink-muted)}
+.afc .im{border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;cursor:zoom-in;background:#fff}
+.afc .im img{width:100%;height:250px;object-fit:cover;object-position:top left;display:block}
+@media(max-width:900px){.afgrid{grid-template-columns:1fr}.afc .ms{grid-template-columns:1fr 1fr}}
+
+/* growth flow */
+.flowwrap{width:100%;max-width:1340px;margin:0 auto}
+.flowwrap svg{display:block;width:100%;height:auto}
+#svgFlow .ph{cursor:pointer}
+#svgFlow .fg{transition:opacity .55s ease,transform .55s cubic-bezier(.22,1,.36,1)}
+.flowdet{display:grid;grid-template-columns:repeat(3,1fr) 1.1fr;gap:var(--space-3);margin-top:14px;border:1px solid var(--line);border-radius:var(--radius-lg);padding:16px 20px;background:var(--surface)}
+.flowdet .h{font-size:11.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-muted);margin-bottom:4px}
+.flowdet .x{font-size:14px;color:var(--ink-body);line-height:1.45}
+.flowdet .fnx .h{color:var(--orange)}
+.flowdet .fnx{border-left:1px solid var(--line);padding-left:16px}
+@media(max-width:900px){.flowdet{grid-template-columns:1fr 1fr}.flowdet .fnx{border-left:0;padding-left:0}}
+@media(max-width:600px){.flowwrap{overflow-x:auto}.flowwrap svg{min-width:760px}.flowdet{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="deck" id="deck">
+
+<!-- COVER -->
+<section class="panel cover" id="p0">
+  <div class="inner">
+    <img class="clogo" src="data:image/png;base64,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" alt="DIZCO.id">
+    <div class="ckick">Proposal Kerja Sama · Growth Partner</div>
+    <div class="ctitle">Hypurifier</div>
+    <div class="cperiod">Dari katalog lengkap ke mesin penjualan</div>
+    <div class="cmeta">Disusun DIZCO.id · Oktober 2026 · berdasarkan data publik per 4 Oktober 2026<br>Data diambil dari aplikasi pihak ketiga, angka aktual bisa sedikit berbeda</div>
+  </div>
+  <div class="cscroll">Scroll <span class="arw"></span></div>
+</section>
+
+<!-- 01 PENEMUAN -->
+<section class="panel" id="p1">
+  <div class="inner"><div class="split">
+    <div class="sinfo">
+      <div class="snum">01 · PENEMUAN</div>
+      <div class="stitle">Yang kami temukan</div>
+      <div class="sdesc">
+        <p>Kami telusuri semua titik kontak Hypurifier yang bisa dilihat publik: website, sosial media, toko marketplace, dan iklan.</p>
+        <p>Pondasinya ada: <b>produk lengkap, tim instalasi, dan live rutin.</b></p>
+        <p>Yang belum ada: <b>jalan yang mengubah orang yang lihat jadi orang yang beli.</b></p>
+      </div>
+      <div class="hint">Klik kartu buat detail · klik gambar buat perbesar</div>
+    </div>
+    <div class="sview">
+      <div class="agrid" id="audit"></div>
+      <div class="adetail" id="auditDet"></div>
+      <div class="tline">
+        <div class="tstep"><b>Mar 2026</b>Akun TikTok dibuat</div>
+        <div class="tstep"><b>Apr 2026</b>Listing pertama Shopee</div>
+        <div class="tstep"><b>Jul 2026</b>Website & shower filter rilis</div>
+        <div class="tstep"><b>Okt 2026</b>Hari ini: ±6 bulan</div>
+      </div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 02 KONDISI BISNIS -->
+<section class="panel" id="p2">
+  <div class="inner">
+    <div class="mhead"><div class="k">02 · KONDISI BISNIS</div><div class="t">Produk siap, mesin jualnya belum</div>
+      <div class="d">Angka penjualan online publik, akumulasi sejak toko dibuka · diambil dari aplikasi pihak ketiga, angka aktual bisa sedikit berbeda</div></div>
+    <div class="mgrid">
+      <div class="mcard"><div class="l">Omset TikTok Shop</div><div class="v red">Rp 4,4 Jt</div><div class="s">6 unit dalam 180 hari · mayoritas dari 1 hari di Juli</div></div>
+      <div class="mcard"><div class="l">Omset Shopee</div><div class="v red">Rp 1,2 Jt</div><div class="s">3 unit sejak April · 15 follower toko</div></div>
+      <div class="mcard"><div class="l">Iklan Meta aktif</div><div class="v red">0</div><div class="s">Belum ada iklan di Facebook & Instagram</div></div>
+      <div class="mcard"><div class="l">Kreator affiliate</div><div class="v red">0</div><div class="s">Belum ada video affiliate yang menjual</div></div>
+      <div class="mcard"><div class="l">Lini produk</div><div class="v navy">12+ SKU</div><div class="s">Rp 225rb sampai Rp 58 Jt · kamar mandi, dapur, seluruh rumah</div></div>
+      <div class="mcard"><div class="l">Kapasitas layanan</div><div class="v green">Siap</div><div class="s">Instalasi on-site, maintenance, live harian 09.00–21.00</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 02b LINI PRODUK -->
+<section class="panel" id="p3">
+  <div class="inner"><div class="split">
+    <div class="sinfo">
+      <div class="snum">02 · KONDISI BISNIS</div>
+      <div class="stitle">Tangga harga yang lengkap</div>
+      <div class="sdesc">
+        <p>Hypurifier punya produk di setiap level harga.</p>
+        <p>Ini aset besar: <b>produk murah buat masuk, paket instalasi buat volume, dan produk premium buat margin.</b></p>
+        <p>Tiap level harga butuh cara jual yang berbeda.</p>
+      </div>
+      <div class="hint">Klik kategori · hover bar buat detail</div>
+    </div>
+    <div class="sview">
+      <div class="fbtns" id="pfilter"></div>
+      <svg id="svgPrice" viewBox="0 0 700 420" width="100%" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="cap">Harga jual di website resmi per Oktober 2026 · skala logaritmik · oranye = fokus kerja sama</div>
+    </div>
+  </div></div>
+</section>
+
+<!-- 03 POTENSI: PASAR -->
+<section class="panel" id="p4">
+  <div class="inner"><div class="split">
+    <div class="sinfo">
+      <div class="snum">03 · POTENSI</div>
+      <div class="stitle">Pasarnya sudah ada dan sedang jalan</div>
+      <div class="sdesc">
+        <p>Di TikTok Shop saja, produk filter air teratas menghasilkan <b>ratusan juta per bulan.</b></p>
+        <p>Brand dengan produk sekelas Hypurifier (stainless, ultrafiltrasi, seluruh rumah) sudah tembus <b>±Rp 354 Jt per bulan</b> dari 3 SKU.</p>
+        <p>Di Meta ada <b>±890 iklan aktif</b> untuk "filter air rumah", mayoritas mengarah ke WhatsApp.</p>
+      </div>
+      <div class="hint">Hover bar buat detail channel penjualan</div>
+    </div>
+    <div class="sview">
+      <svg id="svgMarket" viewBox="0 0 700 430" width="100%" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="cap">Oranye = produk sekelas Hypurifier · omset 30 hari (5 Sep – 4 Okt 2026), produk filter air teratas di TikTok Shop Indonesia · data dari aplikasi pihak ketiga, angka aktual bisa sedikit berbeda</div>
+    </div>
+  </div></div>
+</section>
+
+
+<!-- 03a IKLAN KOMPETITOR -->
+<section class="panel" id="p4b">
+  <div class="inner">
+    <div class="mhead" style="margin-bottom:24px"><div class="k">03 · POTENSI</div><div class="t">Kompetitor sudah beriklan, Hypurifier belum</div>
+      <div class="d">Contoh iklan filter air yang sedang tayang di Facebook & Instagram per 5 Oktober 2026 · diambil dari Meta Ad Library</div></div>
+    <div class="adgrid" id="adgrid"></div>
+    <div class="adtake">
+      <div><b>Pembukanya masalah air</b>Keruh, kuning, bau, endapan. Bukan nama produk.</div>
+      <div><b>Semua ke WhatsApp</b>Tidak ada yang jualan langsung. Tujuannya ngobrol dulu, lalu survei.</div>
+      <div><b>Celah buat Hypurifier</b>Keempatnya langsung lempar ke WhatsApp, tanpa halaman yang menunjukkan bukti pemasangan dan harga.</div>
+    </div>
+    <div style="text-align:center"><div class="hint">Klik iklan buat perbesar</div></div>
+  </div>
+</section>
+
+<!-- 03b POTENSI: STRATEGI -->
+<section class="panel" id="p5">
+  <div class="inner">
+    <div class="mhead"><div class="k">03 · POTENSI</div><div class="t">Dibangun dari 4 arah, satu mesin</div>
+      <div class="d">Empat cara jualan yang saling bantu, tiap level harga punya jalurnya sendiri</div></div>
+    <div class="pgrid" id="pillars"></div>
+    <div class="pdet" id="pillarDet"></div>
+    <div class="flow">
+      <div class="fnode">Konten organik<small>bikin orang percaya</small></div><div class="farr">›</div>
+      <div class="fnode">Affiliate<small>kreator ikut jualan</small></div><div class="farr">›</div>
+      <div class="fnode">Iklan Meta<small>cari calon pembeli</small></div><div class="farr">›</div>
+      <div class="fnode o">Landing page<small>yakinkan, 1 tombol</small></div><div class="farr">›</div>
+      <div class="fnode">WhatsApp<small>survei & pasang</small></div>
+    </div>
+    <div style="text-align:center"><div class="hint">Klik tiap kartu buat lihat detailnya</div></div>
+  </div>
+</section>
+
+
+<!-- 03c PORTOFOLIO LP -->
+<section class="panel" id="p5b">
+  <div class="inner">
+    <div class="mhead" style="margin-bottom:28px"><div class="k">03 · POTENSI</div><div class="t">Landing page yang sudah kami bangun</div>
+      <div class="d">Satu format untuk jasa B2B, satu format untuk e-commerce. Semuanya masih live dan bisa dibuka sekarang.</div></div>
+    <div class="lpgrid" id="lpgrid"></div>
+    <div style="text-align:center"><div class="hint">Klik gambar buat scroll seluruh halaman · klik link buat buka versi live</div></div>
+  </div>
+</section>
+
+<!-- 04 STUDI KASUS -->
+<section class="panel" id="p6">
+  <div class="inner"><div class="split">
+    <div class="sinfo">
+      <div class="snum">04 · STUDI KASUS</div>
+      <div class="stitle">Sooreca, filter air yang kami pegang sejak April 2026</div>
+      <div class="sdesc">
+        <p>Kategori yang sama, titik awal yang mirip: produk bagus tapi penjualan online masih kecil.</p>
+        <p>Dari April ke September omset toko naik <b>±34×</b>, setelah tiga bulan sebelumnya datar.</p>
+        <p>Polanya sama di setiap klien: <b>coba dulu, pilih yang berhasil, lalu gas.</b></p>
+      </div>
+      <div class="hint">Klik bar bulan buat lihat apa yang dikerjakan</div>
+    </div>
+    <div class="sview">
+      <svg id="svgCase" viewBox="0 0 700 300" width="100%" preserveAspectRatio="xMidYMid meet"></svg>
+      <div class="phasebox" id="phaseBox"></div>
+      <div class="stats" style="margin-top:14px">
+        <div class="stat"><div class="l">Pesanan per bulan</div><div class="v navy">24×</div><div class="s">April ke September</div></div>
+        <div class="stat"><div class="l">Porsi affiliate</div><div class="v navy">±29%</div><div class="s">dari omset toko</div></div>
+        <div class="stat"><div class="l">ROAS iklan toko</div><div class="v navy">4,30x</div><div class="s">tiap Rp1 iklan jadi Rp4,30</div></div>
+        <div class="stat"><div class="l">Pengunjung yang beli</div><div class="v green">2,70%</div><div class="s">naik dari 2,40% di April</div></div>
+      </div>
+      <div class="cap">Index omset Shopee dari pesanan dibayar, April 2026 (bulan pertama kerja sama) = 1× · April Rp18,4 jt → September Rp625,5 jt · total 2026 Rp1,49 M</div>
+    </div>
+  </div></div>
+</section>
+
+
+
+<!-- 04a BUKTI AFFILIATE -->
+<section class="panel" id="p6c">
+  <div class="inner">
+    <div class="mhead" style="margin-bottom:24px"><div class="k">04 · STUDI KASUS</div><div class="t">Program affiliate yang kami jalankan</div>
+      <div class="d">Dashboard affiliate Shopee klien DIZCO, 30 hari terakhir (5 Sep – 4 Okt 2026)</div></div>
+    <div class="afgrid" id="afgrid"></div>
+    <div style="text-align:center"><div class="hint">Klik dashboard buat lihat versi penuh</div></div>
+  </div>
+</section>
+
+<!-- 04b PORTOFOLIO -->
+<section class="panel" id="p6b">
+  <div class="inner">
+    <div class="mhead" style="margin-bottom:26px"><div class="k">04 · STUDI KASUS</div><div class="t">Brand lain yang kami dampingi</div>
+      <div class="d">Kategori berbeda, pola kerja yang sama. Angka diambil langsung dari dashboard Shopee dan TikTok Shop mereka.</div></div>
+    <div class="pfgrid" id="pfgrid"></div>
+    <div style="text-align:center"><div class="hint">Klik screenshot buat lihat dashboard aslinya</div></div>
+  </div>
+</section>
+
+
+<!-- 05a ALUR KERJA -->
+<section class="panel" id="p6d">
+  <div class="inner">
+    <div class="mhead" style="margin-bottom:14px"><div class="k">05 · KERJA SAMA</div><div class="t">Cara kami membesarkan brand</div>
+      <div class="d">Tiga hal diuji terus: konten, audience, dan sudut pesan iklan. Banyak yang dicoba, sedikit yang menang, yang menang dibesarkan.</div></div>
+    <div class="flowwrap"><svg id="svgFlow" viewBox="0 0 1200 372" preserveAspectRatio="xMidYMid meet"></svg></div>
+    <div class="flowdet" id="flowDet"></div>
+    <div style="text-align:center"><div class="hint">Klik tiap fase buat lihat apa yang dikerjakan</div></div>
+  </div>
+</section>
+
+<!-- 05 CARA KERJA -->
+<section class="panel" id="p7">
+  <div class="inner">
+    <div class="mhead"><div class="k">05 · KERJA SAMA</div><div class="t">4 bulan pertama: dari pondasi ke scale</div>
+      <div class="d">Mulai dari nol butuh waktu, karena itu kerja sama minimal 4 bulan</div></div>
+    <div class="mtabs" id="mtabs"></div>
+    <div class="mdet" id="mdet"></div>
+    <div class="gate" id="mgate"></div>
+    <div style="text-align:center"><div class="hint">Klik tiap bulan buat lihat deliverable-nya</div></div>
+  </div>
+</section>
+
+<!-- 05b TERMS & RATE -->
+<section class="panel" id="p8">
+  <div class="inner">
+    <div class="mhead" style="margin-bottom:30px"><div class="k">05 · KERJA SAMA</div><div class="t">Paket, rate & terms</div></div>
+    <div class="tgrid" id="tiers"></div>
+    <div class="calc">
+      <div class="plan sel" data-plan="A"><div class="pn">Plan A · 50/50</div><div class="pd">50% dibayar sebelum kick-off, 50% sisanya sebelum bulan ke-3.</div></div>
+      <div class="plan" data-plan="B"><div class="pn">Plan B · Lunas di muka</div><div class="pd">Bayar 4 bulan sekaligus, diskon 10%. Bisa dicicil pakai kartu kredit.</div></div>
+      <div class="total"><div class="l">Total kerja sama 4 bulan</div><div class="v" id="totV">-</div><div class="s" id="totS">-</div></div>
+    </div>
+    <div class="hint">Klik paket dan opsi pembayaran buat hitung total 4 bulan</div>
+  </div>
+</section>
+
+<section class="panel" id="p9">
+  <div class="inner">
+    <div class="mhead" style="margin-bottom:26px"><div class="k">05 · KERJA SAMA</div><div class="t">Ketentuan kerja sama</div></div>
+    <div class="terms">
+      <div class="term"><div class="n">1</div><div><b>Minimal 4 bulan.</b> Bulan pertama dipakai membangun pondasi, hasil terukur mulai bulan ke-2.</div></div>
+      <div class="term"><div class="n">2</div><div><b>Budget iklan dan fee KOL di luar fee manajemen.</b> Budget iklan dibayar langsung oleh Hypurifier ke platform, rekomendasi awal ±Rp 15 Jt per bulan.</div></div>
+      <div class="term"><div class="n">3</div><div><b>Sampel produk affiliate</b> disediakan Hypurifier. DIZCO yang memilih, merekrut, dan mengelola kreator.</div></div>
+      <div class="term"><div class="n">4</div><div><b>Pembayaran hanya dua opsi:</b> 50/50, atau lunas di muka dengan diskon 10% yang bisa dicicil kartu kredit. Tidak ada opsi bayar per bulan.</div></div>
+      <div class="term"><div class="n">5</div><div><b>Fokus produk:</b> filter seluruh rumah, dapur, RO, dan softener beserta layanan instalasinya.</div></div>
+      <div class="term"><div class="n">6</div><div><b>Akses akun</b> (Meta Business, TikTok Shop, Shopee) diberikan ke DIZCO selama kerja sama.</div></div>
+      <div class="term"><div class="n">7</div><div><b>Tim sales/CS Hypurifier</b> wajib follow-up lead WhatsApp maksimal 1×24 jam. Lead yang tidak ditindaklanjuti tidak akan jadi penjualan.</div></div>
+      <div class="term"><div class="n">8</div><div><b>Pemutusan sebelum 4 bulan:</b> fee yang sudah dibayar tidak dikembalikan.</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- CLOSING -->
+<section class="panel cover" id="p10">
+  <div class="inner">
+    <div class="ckick">Langkah selanjutnya</div>
+    <div class="ctitle" style="font-size:72px">Mulai dalam 1 minggu</div>
+    <div class="next" style="margin-top:30px;position:relative;z-index:2">
+      <div class="nx"><div class="n">01</div><div class="t">Diskusi & pilih paket</div><div class="d">Kami cocokkan target omset dan kapasitas tim instalasi.</div></div>
+      <div class="nx"><div class="n">02</div><div class="t">SPK & akses akun</div><div class="d">Tanda tangan, pembayaran, lalu serah akses Meta, TikTok Shop, dan Shopee.</div></div>
+      <div class="nx"><div class="n">03</div><div class="t">Kick-off minggu 1</div><div class="d">Audit lengkap, landing page pertama, dan rekrut kreator gelombang pertama.</div></div>
+    </div>
+    <img class="clogo" style="margin:44px 0 0;height:38px" src="data:image/png;base64,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" alt="DIZCO.id">
+  </div>
+</section>
+
+</div>
+<div class="dots" id="dots"></div>
+<div class="imglb" id="imglb"><button class="imglbclose" onclick="closeImg()">&times;</button><div class="imgwrap" id="imgwrap"><img id="imgel" alt=""></div><div class="imgcap" id="imgcap"></div><div class="imgtools"><button onclick="zoomBy(-0.3)">&minus;</button><button onclick="zoomReset()">Reset</button><button onclick="zoomBy(0.3)">+</button></div></div>
+
+<script>
+var NS='http://www.w3.org/2000/svg',deck=document.getElementById('deck');
+function tk(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim();}
+var INK=tk('--ink'),MUTED=tk('--ink-muted'),MUTE=tk('--mute'),LINE=tk('--line'),ALT=tk('--surface-alt'),OR=tk('--orange'),RED=tk('--red');
+var tip=document.createElement('div');tip.className='tip';document.body.appendChild(tip);
+function showTip(e,h){tip.innerHTML=h;tip.style.left=e.clientX+'px';tip.style.top=(e.clientY-10)+'px';tip.style.opacity=1;}
+function hideTip(){tip.style.opacity=0;}
+function el(t,a){var e=document.createElementNS(NS,t);for(var k in a)e.setAttribute(k,a[k]);return e;}
+function whenVisible(id,fn){var e=document.getElementById(id);if(!e)return;new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting)fn();});},{root:deck,threshold:.2}).observe(e);}
+function rp(v){if(v>=1000)return 'Rp '+(v/1000).toFixed(v%1000?1:0).replace('.',',')+' M';if(v>=1)return 'Rp '+(Math.round(v*100)/100).toString().replace('.',',')+' Jt';return 'Rp '+Math.round(v*1000)+'rb';}
+function animW(list){list.forEach(function(a,i){var r=a[0];r.style.transition='none';r.setAttribute('width',0);void r.getBoundingClientRect();setTimeout(function(){r.style.transition='width .75s cubic-bezier(.22,1,.36,1)';r.setAttribute('width',a[1]);},60+i*70);});}
+
+/* nav dots */
+(function(){var ps=document.querySelectorAll('.panel'),de=document.getElementById('dots'),ds=[];
+ps.forEach(function(p,i){var b=document.createElement('button');b.className='dot'+(i===0?' on':'');b.onclick=function(){p.scrollIntoView({behavior:'smooth'});};de.appendChild(b);ds.push(b);});
+var ob=new IntersectionObserver(function(en){en.forEach(function(x){if(x.isIntersecting){var i=[].indexOf.call(ps,x.target);ds.forEach(function(d,j){d.classList.toggle('on',i===j);});}});},{root:deck,threshold:.55});ps.forEach(function(p){ob.observe(p);});})();
+
+/* 01 audit */
+(function(){var A=[
+ {ch:'Website',big:'Katalog',sm:'hypurifier.com',st:['amb','Perlu dibenahi'],img:[['img/web-home.webp','Website hypurifier.com, halaman utama'],['img/web-softener.webp','Halaman produk Central Softener, Rp 58 Jt']],d:'Website sudah punya katalog dan harga, tapi <b>belum ada bukti</b> (testimoni, foto instalasi, hasil uji air) dan masih ada teks bawaan template. Belum ada pixel iklan, jadi pengunjung tidak bisa diukur atau di-retarget.'},
+ {ch:'Instagram',big:'3,7rb',sm:'follower @hypurifier.id',st:['grn','Aset ada'],img:[['img/ig-profile.webp','Instagram @hypurifier.id, 3.682 follower']],d:'Akun paling besar Hypurifier. Highlight <b>Perumahan, Testimoni, Before After, Apartment</b> sudah ada. Ini bahan bukti terbaik untuk iklan dan landing page.'},
+ {ch:'TikTok',big:'167',sm:'follower · 68 video',st:['red','Belum menjangkau'],img:[['img/tt-profile.webp','TikTok @hypurifierindonesia, 167 follower dan 300 likes']],d:'68 video baru menghasilkan <b>299 likes total.</b> Kontennya belum masuk FYP. Live jalan setiap hari 09.00–21.00 dengan promo flash sale, tapi belum terlihat menghasilkan penjualan.'},
+ {ch:'TikTok Shop',big:'Rp 4,4 Jt',sm:'180 hari · 2 toko',st:['red','Belum jalan'],d:'Ada <b>2 toko</b> (Hypurifier Indonesia & Hypurifier Smart Filter). Penjualan 6 unit dalam 180 hari, mayoritas dari satu hari di Juli. Belum ada kreator affiliate.'},
+ {ch:'Shopee',big:'3 unit',sm:'7 produk · sejak Apr',st:['red','Belum jalan'],d:'7 produk aktif, 15 follower toko, total 3 unit terjual. Ada 1 listing dengan nama brand salah ketik. Belum ada iklan toko.'},
+ {ch:'Iklan Meta',big:'0',sm:'iklan aktif',st:['red','Belum mulai'],img:[['img/meta-adlib.webp','Meta Ad Library, pencarian hypurifier di Indonesia: tidak ada iklan aktif']],d:'Belum ada iklan di Facebook & Instagram. Padahal untuk produk jutaan rupiah, <b>iklan ke WhatsApp</b> adalah jalur utama di kategori ini.'}];
+var g=document.getElementById('audit'),det=document.getElementById('auditDet');
+A.forEach(function(a,i){var c=document.createElement('div');c.className='acard'+(i===0?' sel':'');c.innerHTML='<div class="ch">'+a.ch+'</div><div class="big">'+a.big+'</div><div class="sm">'+a.sm+'</div><span class="chipst st-'+a.st[0]+'">'+a.st[1]+'</span>';
+c.onclick=function(){g.querySelectorAll('.acard').forEach(function(x){x.classList.remove('sel');});c.classList.add('sel');show(a);};g.appendChild(c);});
+function show(a){var h='<div class="atx"><b>'+a.ch+'.</b> '+a.d+'</div>';if(a.img){h+='<div class="shots">'+a.img.map(function(m,k){return '<div class="shot" data-k="'+k+'"><img src="'+m[0]+'" alt=""></div>';}).join('')+'</div>';}det.innerHTML=h;det.querySelectorAll('.shot').forEach(function(sh){sh.onclick=function(){var m=a.img[+sh.dataset.k];openImg(m[0],m[1]);};});}
+show(A[0]);})();
+
+/* 02b price ladder */
+(function(){var P=[
+ ['Shower Turbo Fan',0.225,0.275,'km'],['Shower Double Filter',0.225,0.395,'km'],['Countertop HYP002',1.65,1.85,'dp'],['Countertop HYP001',2.067,2.35,'dp'],['Pre-filter sisik ikan',2.195,2.35,'sr'],['Main Filter 8.000 L/jam',5.5,6.5,'sr'],['Smart Tap M3',9.75,11.5,'dp'],['Smart Tap HMR I5 (RO)',13.5,20,'dp'],['Smart Tap H2B',23,25,'dp'],['Central Softener 38L',58,68,'sr']];
+var F=[['all','Semua'],['km','Kamar mandi'],['dp','Dapur & air minum'],['sr','Seluruh rumah']];
+var C={km:MUTE,dp:INK,sr:OR};
+var PIM={'Shower Turbo Fan':'hs6011','Shower Double Filter':'hs6015','Countertop HYP002':'hyp002','Countertop HYP001':'hyp001','Pre-filter sisik ikan':'prefilter','Main Filter 8.000 L/jam':'mainfilter','Smart Tap M3':'m3','Smart Tap HMR I5 (RO)':'hmri5','Smart Tap H2B':'h2b','Central Softener 38L':'softener'};
+var svg=document.getElementById('svgPrice'),fb=document.getElementById('pfilter'),cur='all',rs=[];
+function x(v){var lo=Math.log10(0.1),hi=Math.log10(100);return 240+(Math.log10(v)-lo)/(hi-lo)*(700-240-110);}
+function draw(){while(svg.firstChild)svg.removeChild(svg.firstChild);rs=[];var L=P.filter(function(p){return cur==='all'||p[3]===cur;});var n=L.length,gap=10,bh=Math.min(30,(400-(n-1)*gap)/n);
+[0.1,1,10,100].forEach(function(t){svg.appendChild(el('line',{x1:x(t),x2:x(t),y1:0,y2:n*(bh+gap),stroke:LINE}));var tx=el('text',{x:x(t),y:n*(bh+gap)+16,'text-anchor':'middle',class:'axis'});tx.textContent=rp(t);svg.appendChild(tx);});
+L.forEach(function(p,i){var yy=i*(bh+gap);svg.appendChild(el('image',{x:0,y:yy,width:bh,height:bh,href:'img/prod/'+PIM[p[0]]+'.webp',preserveAspectRatio:'xMidYMid slice','clip-path':'inset(0 round 5px)'}));
+var lb=el('text',{x:bh+10,y:yy+bh/2+6,'font-size':15,'font-weight':500,fill:INK});lb.textContent=p[0];svg.appendChild(lb);
+var w=x(p[1])-240;var r=el('rect',{x:240,y:yy,width:0,height:bh,rx:6,fill:C[p[3]],class:'bar'});svg.appendChild(r);rs.push([r,w]);
+var v=el('text',{x:x(p[1])+8,y:yy+bh/2+6,'font-size':15,'font-weight':600,fill:INK});v.textContent=rp(p[1]);svg.appendChild(v);
+r.addEventListener('mousemove',function(e){showTip(e,'<b>'+p[0]+'</b><br>Harga jual '+rp(p[1])+' · <span class="o">coret '+rp(p[2])+' (−'+Math.round((1-p[1]/p[2])*100)+'%)</span>');});r.addEventListener('mouseleave',hideTip);});
+svg.setAttribute('viewBox','0 0 700 '+(n*(bh+gap)+24));animW(rs);}
+F.forEach(function(f){var b=document.createElement('button');b.className='fbtn'+(f[0]===cur?' on':'');b.textContent=f[1];if(C[f[0]])b.style.borderLeft='5px solid '+C[f[0]];b.onclick=function(){cur=f[0];fb.querySelectorAll('.fbtn').forEach(function(z){z.classList.remove('on');});b.classList.add('on');draw();};fb.appendChild(b);});
+draw();whenVisible('svgPrice',function(){animW(rs);});})();
+
+/* 03 market */
+(function(){var M=[
+ ['Filter keran kamar mandi',284.6,'Rp 15rb',9.9,274.6,0,0,'tt1'],['Filter toren polyester',208.9,'Rp 55rb',11.9,194.6,0,0,'tt2'],['Stainless ultrafiltrasi (A)',195.8,'Rp 599rb',113.3,81.8,1,1,'tt3'],['Paket housing 3 tahap',189.9,'Rp 199rb',15.2,174.5,0,0,'tt4'],['Shower filter "skincare"',133.7,'Rp 213rb',12.4,121.3,0,0,'tt5'],['Stainless + manometer (A)',97.2,'Rp 869rb',65.9,24.5,1,1,'tt6'],['Shower filter ION',88.5,'Rp 17rb',0.8,87.7,0,0,'tt7'],['Stainless I-Type (A)',60.7,'Rp 1,68 Jt',0,55.6,1,1,'tt9'],['Hypurifier (2 toko)',0.09,'Rp 91rb',0,0,1,2,'hyp']];
+var svg=document.getElementById('svgMarket'),W=700,pad=262,rp_=90,n=M.length,gap=10,bh=(430-(n-1)*gap)/n,mx=300,rs=[];
+M.forEach(function(m,i){var yy=i*(bh+gap);svg.appendChild(el('image',{x:0,y:yy,width:bh,height:bh,href:'img/prod/'+m[7]+'.webp',preserveAspectRatio:'xMidYMid slice','clip-path':'inset(0 round 5px)'}));
+var lb=el('text',{x:bh+10,y:yy+bh/2+5,'font-size':14.5,'font-weight':m[6]?600:500,fill:m[6]===2?RED:INK});lb.textContent=m[0];svg.appendChild(lb);
+svg.appendChild(el('rect',{x:pad,y:yy,width:W-pad-rp_,height:bh,rx:6,fill:ALT}));
+var w=Math.max(2,(W-pad-rp_)*m[1]/mx);var r=el('rect',{x:pad,y:yy,width:0,height:bh,rx:6,fill:m[6]===2?RED:(m[5]?OR:MUTE),class:'bar'});svg.appendChild(r);rs.push([r,w]);
+var v=el('text',{x:W,y:yy+bh/2+5,'text-anchor':'end','font-size':15,'font-weight':600,fill:INK});v.textContent=rp(m[1]);svg.appendChild(v);
+r.addEventListener('mousemove',function(e){showTip(e,'<b>'+m[0]+'</b><br>Omset 30 hari '+rp(m[1])+' · harga '+m[2]+(m[3]||m[4]?'<br><span class="o">Live '+rp(m[3])+' · Video '+rp(m[4])+'</span>':''));});r.addEventListener('mouseleave',hideTip);});
+whenVisible('svgMarket',function(){animW(rs);});})();
+
+/* 03b pillars */
+(function(){var P=[
+ {t:'Iklan Meta',s:'Cari calon pembeli produk mahal',c:'',ic:'A',pr:'Filter air minum (RO), softener, filter utama, paket pasang seluruh rumah',cr:'Pasang iklan di Facebook & Instagram. Yang klik dibawa ke landing page, lalu chat WhatsApp. Sasaran: perumahan Serpong, BSD, Tangerang, dan kota lain yang airnya bermasalah.',hk:'Air kuning & bau, kerak di keran, "cek kualitas air gratis"',kp:'Berapa biaya untuk dapat 1 orang yang chat. Dari yang chat, berapa yang minta survei lalu beli.'},
+ {t:'Affiliate',s:'Kreator ikut jualan di TikTok Shop',c:'',ic:'B',pr:'Filter meja (countertop), pre-filter, paket filter utama',cr:'Kirim produk ke kreator yang kontennya soal rumah tangga: home tour, pasangan baru, ibu rumah tangga. Mereka bikin video dan dapat komisi tiap ada yang beli.',hk:'Air sebelum vs sesudah disaring, "rumah baru wajib pasang ini", bongkar filter setelah sebulan',kp:'Berapa kreator yang aktif posting, berapa video yang laku, total omset dari kreator'},
+ {t:'Konten organik & live',s:'Bikin orang percaya',c:'',ic:'C',pr:'Semua produk, fokus edukasi soal air di rumah',cr:'Rekam pemasangan asli di rumah pelanggan dan tes air sebelum-sesudah. Bikin naskah live yang jelas dari pembuka sampai ajakan beli.',hk:'"Isi filter setelah 1 bulan", "air sumur di perumahan ini"',kp:'Jumlah penonton, chat yang masuk, omset dari live'},
+ {t:'Landing page',s:'Halaman yang meyakinkan sebelum chat',c:'',ic:'D',pr:'3 halaman, satu per masalah: air kotor, air minum, air sadah (bikin kerak)',cr:'Enak dibuka di HP. Isinya bukti pemasangan, harga mulai dari, jawaban soal garansi, dan 1 tombol WhatsApp. Dilengkapi Meta ads optimization supaya iklan tahu siapa yang benar-benar chat.',hk:'Masalah di atas, bukti di tengah, 1 tombol di bawah',kp:'Dari 100 pengunjung, berapa yang klik WhatsApp. Halaman mana yang paling banyak menghasilkan pembeli.'}];
+var g=document.getElementById('pillars'),d=document.getElementById('pillarDet');
+function show(p){d.innerHTML='<div><div class="h">Produk yang dijual</div><div class="x">'+p.pr+'</div></div><div><div class="h">Caranya</div><div class="x">'+p.cr+'</div></div><div><div class="h">Kalimat pembuka konten</div><div class="x">'+p.hk+'</div></div><div><div class="h">Yang kami ukur</div><div class="x">'+p.kp+'</div></div>';}
+P.forEach(function(p,i){var c=document.createElement('div');c.className='pcard'+(i===0?' sel':'');c.innerHTML='<div class="ic">'+p.ic+'</div><div class="pt">'+p.t+'</div><div class="ps">'+p.s+'</div>';c.onclick=function(){g.querySelectorAll('.pcard').forEach(function(x){x.classList.remove('sel');});c.classList.add('sel');show(p);};g.appendChild(c);});show(P[0]);})();
+
+/* 04 case */
+(function(){var G=[19.00,20.52,31.34,18.45,19.40,96.35,240.37,420.30,625.50],B=18.45;var ORD=[69,143,149,110,112,482,1196,1829,2643];function rp(v){return 'Rp'+(v<100?(Math.round(v*10)/10):Math.round(v)).toString().replace('.',',')+' jt';}
+var NM=['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep'];
+var PH=['Sebelum','Sebelum','Sebelum','Coba-coba','Coba-coba','Pilih yang berhasil','Pilih yang berhasil','Gas yang berhasil','Gas yang berhasil'];
+var TX=['Sebelum kerja sama. Omset datar, cuma naik saat promo tanggal kembar.','Sebelum kerja sama. Yang mampir ke toko naik, tapi yang beli malah turun.','Sebelum kerja sama. Sempat naik sedikit karena promo, lalu turun lagi di April.',
+'Kerja sama mulai pertengahan April. Kami pelajari tokonya, coba beberapa ide iklan dengan budget kecil, dan ajak kreator pertama.','Masih tahap coba. Yang dicari iklan yang untung, bukan sekadar ramai.',
+'Iklan yang rugi dimatikan, yang jalan diperbanyak. Omset naik ±5× dari April. Pembeli yang belanja lagi naik ke 11,5%.','Tiga landing page untuk tiga masalah sudah online. Iklan Facebook & Instagram mulai mendatangkan pembeli baru. Penjualan dari kreator naik ±3× dalam sebulan.',
+'Budget cuma ditambah di iklan yang terbukti. Budget naik 1,8×, tapi tiap Rp1 iklan justru menghasilkan Rp4,21.','Produk kedua ikut digas dengan iklan dan landing page sendiri. Kreator menyumbang ±29% omset toko. Dari 100 pengunjung toko, hampir 3 orang beli.'];
+var svg=document.getElementById('svgCase');if(!svg)return;var box=document.getElementById('phaseBox');
+var W=700,H=300,pT=30,pB=34,n=G.length,gap=16,bw=(W-(n-1)*gap)/n,mx=38,rs=[];
+function idx(v){return v/B;}function y(v){return pT+(1-idx(v)/mx)*(H-pT-pB);}
+function f(x){return (Math.round(x*10)/10).toString().replace('.',',')+'×';}
+var xa=3*(bw+gap)-gap/2;svg.appendChild(el('line',{x1:xa,x2:xa,y1:pT-14,y2:H-pB,stroke:OR,'stroke-width':1.5,'stroke-dasharray':'4 4'}));
+var ta=el('text',{x:xa+6,y:pT-4,'font-size':12.5,'font-weight':500,fill:OR});ta.textContent='DIZCO mulai';svg.appendChild(ta);
+function col(i,sel){return sel?OR:(i<3?MUTE:INK);}
+function pick(i){rs.forEach(function(a,j){a[0].setAttribute('fill',col(j,j===i));});box.innerHTML='<div class="pbh"><span class="pm">'+NM[i]+' 2026 · '+PH[i]+'</span><span class="pv">'+rp(G[i])+'</span><span class="pi">'+f(idx(G[i]))+' · '+ORD[i].toLocaleString('id-ID')+' pesanan</span></div><div class="pbt">'+TX[i]+'</div>';if(window.tidyEl)tidyEl(box.querySelector('.pbt'));}
+G.forEach(function(v,i){var xx=i*(bw+gap);var r=el('rect',{x:xx,y:H-pB,width:bw,height:0,rx:5,fill:col(i,false),class:'bar'});svg.appendChild(r);rs.push([r,v]);
+var t=el('text',{x:xx+bw/2,y:H-10,'text-anchor':'middle',class:'axis'});t.textContent=NM[i];svg.appendChild(t);
+var lb=el('text',{x:xx+bw/2,y:y(v)-8,'text-anchor':'middle','font-size':i<3?13:15,'font-weight':600,fill:i<3?MUTED:INK,class:'axis'});lb.style.fill=i<3?MUTED:INK;lb.textContent=f(idx(v));svg.appendChild(lb);
+r.onclick=function(){pick(i);};r.addEventListener('mousemove',function(e){showTip(e,'<b>'+NM[i]+' 2026 · '+rp(v)+'</b><br>'+f(idx(v))+' · '+ORD[i].toLocaleString('id-ID')+' pesanan<br><span class="o">'+PH[i]+'</span>');});r.addEventListener('mouseleave',hideTip);});
+pick(8);
+whenVisible('svgCase',function(){rs.forEach(function(a,i){var r=a[0],v=a[1];r.style.transition='none';r.setAttribute('y',H-pB);r.setAttribute('height',0);void r.getBoundingClientRect();setTimeout(function(){r.style.transition='y .8s cubic-bezier(.22,1,.36,1),height .8s cubic-bezier(.22,1,.36,1)';r.setAttribute('y',y(v));r.setAttribute('height',H-pB-y(v));},60+i*70);});});})();
+
+/* 05 months */
+(function(){var M=[
+ {n:'Bulan 1',t:'Siapkan pondasi',a:['Landing page "air kotor" online','Setup Meta ads optimization di web','Coba 4–6 ide iklan, budget kecil'],b:['Pilih 3 produk utama','Ajak 20–30 kreator pertama','Kirim produk contoh ke kreator'],c:['Rekam 10–20 pemasangan asli','Bikin naskah live baru','Rapikan toko TikTok Shop & Shopee'],g:'Lanjut kalau sudah ada 2 iklan yang dapat calon pembeli dengan biaya murah.'},
+ {n:'Bulan 2',t:'Pilih yang berhasil',a:['Matikan iklan yang mahal','Landing page "air minum" online','Iklan ulang ke orang yang sudah buka web'],b:['Kumpulkan kreator yang videonya laku','Kasih contoh kalimat pembuka yang terbukti','Tambah 20–30 kreator baru'],c:['Video pemasangan jadi bahan iklan','Evaluasi live tiap minggu','Jadwal konten tetap'],g:'Lanjut kalau biaya per calon pembeli stabil dan sudah ada yang beli lewat WhatsApp.'},
+ {n:'Bulan 3',t:'Gas yang berhasil',a:['Budget ditambah hanya di iklan yang terbukti','Landing page "air sadah" online','Buka kota atau area baru'],b:['Kuota kreator di paket terisi penuh','Video kreator terbaik dipakai jadi iklan','Fokus ke produk paling laku'],c:['Jadwal live tetap + promo terukur','Konten testimoni pelanggan','Highlight & bio Instagram diperbarui'],g:'Target: budget iklan naik, tapi biaya per calon pembeli tetap murah.'},
+ {n:'Bulan 4',t:'Rapikan & rencana lanjut',a:['Ganti materi iklan yang mulai bosan dilihat','Perbaiki landing page dari data','Rencana budget 3 bulan berikutnya'],b:['Program kreator jalan rutin','Pilih kreator terbaik untuk kerja sama panjang','Evaluasi besaran komisi'],c:['Stok konten untuk 3 bulan ke depan','Evaluasi semua channel','Laporan akhir + saran langkah berikutnya'],g:'Hasil akhir: laporan 4 bulan dan rencana kerja lanjutan.'}];
+var t=document.getElementById('mtabs'),d=document.getElementById('mdet'),gt=document.getElementById('mgate');
+function li(a){return '<ul>'+a.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>';}
+function show(m){d.innerHTML='<div><div class="h">Iklan & landing page</div>'+li(m.a)+'</div><div><div class="h">Affiliate (kreator)</div>'+li(m.b)+'</div><div><div class="h">Konten & live</div>'+li(m.c)+'</div>';gt.innerHTML='<b>Syarat lanjut:</b> '+m.g;}
+M.forEach(function(m,i){var c=document.createElement('div');c.className='mtab'+(i===0?' sel':'');c.innerHTML='<div class="mn">'+m.n+'</div><div class="mt">'+m.t+'</div>';c.onclick=function(){t.querySelectorAll('.mtab').forEach(function(x){x.classList.remove('sel');});c.classList.add('sel');show(m);};t.appendChild(c);});show(M[0]);})();
+
+/* 05b tiers + calc */
+(function(){var INC=['Full ads handling, semua platform','Unlimited landing page + Meta ads optimization','E-commerce enabler: setup promo, voucher, desain toko','Monthly report & bi-weekly meeting'];
+var T=[
+ {k:'base',n:'Base Service',f:20,q:[['20','banner statis'],['50','affiliate & KOL dikelola'],['10','video konten'],['8','IG feed post']],x:'Affiliate & KOL program, end-to-end'},
+ {k:'hyper',n:'Hypergrowth',f:30,q:[['45','banner statis'],['100','affiliate & KOL dikelola*'],['20','video konten'],['15','IG feed post']],x:'Affiliate & KOL program, end-to-end',note:'*+50 affiliate ekstra tanpa biaya tambahan kalau performa sangat baik, total sampai 150. Fee KOL di luar fee manajemen.'}];
+var g=document.getElementById('tiers'),cur=T[0],plan='A';
+function fmt(v){return 'Rp '+(Math.round(v*100)/100).toString().replace('.',',')+' Jt';}
+function calc(){var tot=cur.f*4,v,s;if(plan==='A'){v=fmt(tot);s=['50% di awal: '+fmt(tot/2),'50% sebelum bulan ke-3: '+fmt(tot/2)];}else{v=fmt(tot*0.9)+'<s class="was">'+fmt(tot)+'</s><span class="off">Hemat 10%</span>';s=['Hemat '+fmt(tot*0.1),'Bisa dicicil kartu kredit'];}
+document.getElementById('totV').innerHTML=v;s.push('Belum termasuk budget iklan, fee KOL & PPN');document.getElementById('totS').innerHTML='<ul>'+s.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul>';}
+T.forEach(function(t){var c=document.createElement('div');c.className='tier'+(t===cur?' sel':'');
+ c.innerHTML='<div class="tname">'+t.n+'</div><div class="tn">'+fmt(t.f)+'<span> / bulan</span></div>'+
+ '<div class="tq">'+t.q.map(function(x){return '<div><b>'+x[0]+'</b>'+x[1]+'</div>';}).join('')+'<div class="tx">'+t.x+'</div></div>'+
+ (t.note?'<div class="tnote">'+t.note+'</div>':'')+
+ '<div class="tinc"><div class="h">Termasuk</div><ul>'+INC.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ul></div>';
+ c.onclick=function(){cur=t;g.querySelectorAll('.tier').forEach(function(x){x.classList.remove('sel');});c.classList.add('sel');calc();};g.appendChild(c);});
+document.querySelectorAll('.plan').forEach(function(p){p.onclick=function(){plan=p.dataset.plan;document.querySelectorAll('.plan').forEach(function(x){x.classList.remove('sel');});p.classList.add('sel');calc();};});
+calc();})();
+
+
+/* image lightbox: zoom + drag-pan */
+var zs=1,zx=0,zy=0,drag=null,moved=0,iw=document.getElementById('imgwrap'),ie=document.getElementById('imgel');
+function applyZ(){ie.style.transform='scale('+zs+') translate('+(zx/zs)+'px,'+(zy/zs)+'px)';iw.classList.toggle('z',zs>1);}
+function openImg(src,cap){ie.src=src;document.getElementById('imgcap').textContent=cap;zs=1;zx=zy=0;ie.style.transformOrigin='50% 50%';applyZ();document.getElementById('imglb').classList.add('open');}
+function closeImg(){document.getElementById('imglb').classList.remove('open');}
+function zoomBy(d){zs=Math.min(2.5,Math.max(1,zs+d));if(zs===1){zx=zy=0;}applyZ();}
+function zoomReset(){zs=1;zx=zy=0;applyZ();}
+iw.addEventListener('click',function(e){if(moved>6)return;if(zs>1){zoomReset();return;}var r=ie.getBoundingClientRect();ie.style.transformOrigin=((e.clientX-r.left)/r.width*100)+'% '+((e.clientY-r.top)/r.height*100)+'%';zs=1.3;applyZ();});
+iw.addEventListener('wheel',function(e){e.preventDefault();zoomBy(e.deltaY<0?0.15:-0.15);},{passive:false});
+iw.addEventListener('pointerdown',function(e){moved=0;if(zs<=1)return;drag=[e.clientX-zx,e.clientY-zy];iw.setPointerCapture(e.pointerId);iw.classList.add('drag');ie.style.transition='none';});
+iw.addEventListener('pointermove',function(e){if(!drag)return;var nx=e.clientX-drag[0],ny=e.clientY-drag[1];moved+=Math.abs(nx-zx)+Math.abs(ny-zy);zx=nx;zy=ny;applyZ();});
+iw.addEventListener('pointerup',function(){drag=null;iw.classList.remove('drag');ie.style.transition='';});
+document.getElementById('imglb').addEventListener('click',function(e){if(e.target===this)window.closeImg();});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')window.closeImg();});
+
+/* LP portfolio */
+(function(){var L=[
+ {c:'b2b',tg:'B2B · Jasa konsultan',nm:'Plus One Advisory',ds:'Studi dan kerja di Australia. Filter calon klien "ini untuk kamu / bukan untuk kamu", lalu lead masuk ke WhatsApp konsultasi.',img:'img/lp-plusone-dfull.png',w:1200,url:'https://plusoneadvisory.com/'},
+ {c:'',tg:'E-commerce · Skincare',nm:'Nurilab Acne Concealing',ds:'Video dokter dan masalah jerawat sehari-hari, ditutup ke Shopee Mall.',img:'img/lp-nurilab-m.png',w:430,url:'https://nurilab.id/meta-conversion-ac/'},
+ {c:'',tg:'E-commerce · Makanan',nm:'Lean Lab Dry Rub',ds:'Harga paket di atas, video resep, tombol beli yang nempel di layar.',img:'img/lp-leanlab-m.png',w:430,url:'https://leanlab.co.id/hero-page/'},
+ {c:'',tg:'E-commerce · Filter air',nm:'Sooreca Shower Filter',ds:'Angle skincare: air mandi sebagai penyebab kulit kering dan jerawat, lalu ke Shopee.',img:'img/lp-sooreca-m.png',w:430,url:'https://sooreca-healthy-living.myscalev.com/homepage'}];
+var g=document.getElementById('lpgrid');if(!g)return;
+L.forEach(function(x){var d=document.createElement('div');d.className='lpc '+x.c;
+ d.innerHTML='<div class="th"><img src="'+x.img+'" alt="'+x.nm+'" loading="lazy"></div><div class="bd"><div class="tg">'+x.tg+'</div><div class="nm">'+x.nm+'</div><div class="ds">'+x.ds+'</div><a class="lk" href="'+x.url+'" target="_blank" rel="noopener">Buka versi live ↗</a></div>';
+ d.querySelector('.th').onclick=function(){openTall(x.img,x.nm+' · '+x.url.replace('https://',''),x.w);};g.appendChild(d);});})();
+function openTall(src,cap,w){openImg(src,cap);var lbx=document.getElementById('imglb');lbx.classList.add('tall');var im=document.getElementById('imgel');im.style.width='min('+w+'px,90vw)';document.getElementById('imgwrap').scrollTop=0;}
+(function(){var lbx=document.getElementById('imglb'),oc=closeImg;window.closeImg=function(){oc();lbx.classList.remove('tall');document.getElementById('imgel').style.width='';};})();
+
+/* one sentence per line (DIZCO Report System) */
+var SPL=/(?<!\b(?:vs|dll|mis|s\.d))\.\s+(?=(?:<b>)?[A-Z0-9±"(<])/g;
+function tidyEl(e){if(!e||e.querySelector('ul,table,img,.shots,.ss'))return;var h=e.innerHTML.trim().replace(SPL,'.\u0001');if(h.indexOf('\u0001')<0)return;e.innerHTML=h.split('\u0001').map(function(x){return '<span class="ss">'+x.trim()+'</span>';}).join('');}
+window.tidyEl=tidyEl;
+document.querySelectorAll('.hl,.mhead .d,.phasebox,.gate,.term > div:last-child,.nx .d,.lpc .ds,.pdet .x,.cmeta').forEach(tidyEl);
+document.querySelectorAll('.adetail .atx').forEach(tidyEl);
+new MutationObserver(function(){var a=document.querySelector('#auditDet .atx');if(a&&!a.querySelector('.ss'))tidyEl(a);document.querySelectorAll('#pillarDet .x,#mgate').forEach(function(x){if(!x.querySelector('.ss'))tidyEl(x);});}).observe(document.body,{childList:true,subtree:true});
+
+/* DIZCO portfolio */
+(function(){var g=document.getElementById('pfgrid');if(!g)return;var F=[
+ {lg:'hazel-studios',nm:'Hazel Studio',ind:'Fashion · TikTok Shop',st:'Rp1,1 M',ds:'GMV TikTok Shop per bulan, naik dari Rp220,9 jt (5×).',pr:'Okt 2025 → Mar 2026',b:'dizco-case-hazel-studio-tiktok-2025-10-before',a:'dizco-case-hazel-studio-tiktok-2026-03-after',bl:'Oktober 2025',al:'Maret 2026'},
+ {lg:'hansoul',nm:'Hansoul',ind:'Tumbler & drinkware',st:'12×',ds:'Penjualan toko Rp12,9 jt menjadi Rp155,5 jt per bulan.',pr:'Mar → Sep 2026',b:'dizco-case-hansoul-shopee-2026-03-before',a:'dizco-case-hansoul-shopee-2026-09-after',bl:'Maret 2026',al:'September 2026'},
+ {lg:'hayguys',nm:'HAYGUYS',ind:'Fashion · Kebaya',st:'22,6×',ds:'Penjualan toko Rp11,8 jt menjadi Rp265,2 jt per bulan, ROAS iklan 15,3×.',pr:'Jan → Apr 2026',b:'dizco-case-hayguys-shopee-2026-01-before',a:'dizco-case-hayguys-shopee-2026-04-peak',bl:'Januari 2026',al:'April 2026'},
+ {lg:'shoppingyukz',nm:'Shoppingyukz',ind:'Fashion · Kebaya',st:'2,3×',ds:'Penjualan toko Rp58,2 jt menjadi Rp134,6 jt per bulan, ROAS iklan 13,3×.',pr:'Jun → Agu 2026',b:'dizco-case-shoppingyukz-shopee-2026-06-before',a:'dizco-case-shoppingyukz-shopee-2026-08-after',bl:'Juni 2026',al:'Agustus 2026'},
+ {lg:'moc-indonesia',nm:'MOC Indonesia',ind:'Fashion · Affiliate',st:'Rp575,9 jt',ds:'GMV dari program affiliate TikTok, 3.021 pesanan.',pr:'Des 2025 → Mei 2026',tl:[['239','affiliate di-deploy'],['98%','benar-benar posting'],['9,17×','GMV per Rp1 biaya']]}];
+F.forEach(function(x){var d=document.createElement('div');d.className='pf';
+ var h='<div class="hd"><div class="lg"><img src="img/logo-'+x.lg+'.webp" alt=""></div><div><div class="nm">'+x.nm+'</div><div class="ind">'+x.ind+'</div></div></div><div class="st">'+x.st+'</div><div class="ds">'+x.ds+'</div><div class="pr">'+x.pr+'</div>';
+ if(x.a){h+='<div class="ba"><div data-i="'+x.b+'" data-c="'+x.nm+' · sebelum, '+x.bl+'"><span>Sebelum</span><img src="img/'+x.b+'.webp" alt=""></div><div class="af" data-i="'+x.a+'" data-c="'+x.nm+' · sesudah, '+x.al+'"><span>Sesudah</span><img src="img/'+x.a+'.webp" alt=""></div></div>';}
+ else{h+='<div class="tl">'+x.tl.map(function(t){return '<div><b>'+t[0]+'</b><small>'+t[1]+'</small></div>';}).join('')+'</div>';}
+ d.innerHTML=h;d.querySelectorAll('.ba div').forEach(function(b){b.onclick=function(){openImg('img/'+b.dataset.i+'.webp',b.dataset.c);};});g.appendChild(d);});
+var sm=document.createElement('div');sm.className='pf sum';sm.innerHTML='<div class="ind">Total portofolio</div><div class="st">40+ brand</div><div class="ds">Skincare, fashion, makanan, home living, dan jasa B2B.</div>';g.appendChild(sm);})();
+
+/* competitor ads */
+(function(){var g=document.getElementById('adgrid');if(!g)return;var A=[
+ ['hydrobsd','HYDRO BSD','Area BSD · "Air berubah keruh? Cek dulu"'],
+ ['mizu','Mizu Filter Air','Filter seluruh rumah Rp3,5 jt sudah pasang'],
+ ['dokterair','Dokter Air Sumatera','Video · "Air rumahmu kuning, bau, dan keruh?"'],
+ ['nanowater','Nano Water Solution','Video · promo detox pipa air']];
+A.forEach(function(a){var d=document.createElement('div');d.className='adc';d.innerHTML='<div class="im"><img src="img/adlib-'+a[0]+'.png" alt=""></div><div class="nm">'+a[1]+'</div><div class="tg">'+a[2]+'</div>';d.querySelector('.im').onclick=function(){openImg('img/adlib-'+a[0]+'.png',a[1]+' · iklan aktif di Meta Ad Library');};g.appendChild(d);});})();
+
+/* affiliate proof */
+(function(){var g=document.getElementById('afgrid');if(!g)return;var A=[
+ {f:'a',ind:'Sooreca · filter air',st:'Rp181,8 jt',up:'+47,6% vs 30 hari sebelumnya',m:[['841','pesanan'],['590','pembeli baru'],['11,9×','ROI komisi'],['Rp15,3 jt','komisi']]},
+ {f:'b',ind:'Hansoul · tumbler & drinkware',st:'Rp67,4 jt',up:'+55,6% vs 30 hari sebelumnya',m:[['399','pesanan'],['336','pembeli baru'],['19,6×','ROI komisi'],['Rp3,4 jt','komisi']]}];
+A.forEach(function(a){var d=document.createElement('div');d.className='afc';
+ d.innerHTML='<div class="ind">'+a.ind+'</div><div class="hd"><span class="st">'+a.st+'</span><span class="up">'+a.up+'</span></div><div class="ms">'+a.m.map(function(x){return '<div><b>'+x[0]+'</b><small>'+x[1]+'</small></div>';}).join('')+'</div><div class="im"><img src="img/dizco-affiliate-shopee-'+a.f+'.png" alt=""></div>';
+ d.querySelector('.im').onclick=function(){openImg('img/dizco-affiliate-shopee-'+a.f+'.png',a.ind+' · dashboard affiliate Shopee, 30 hari terakhir');};g.appendChild(d);});})();
+
+/* growth flow */
+(function(){var svg=document.getElementById('svgFlow'),det=document.getElementById('flowDet');if(!svg)return;
+var CX=[390,700,1010],LY=[128,210,290],sel=0;
+var PH=[{n:'Testing',k:'10–15 konten beda format: testimoni, before-after air, demo pasang, foto produk.',a:'3–4 kelompok luas: pemilik rumah, ibu rumah tangga, pasangan baru, area dengan air bermasalah.',g:'4–6 sudut pesan: air kuning & bau, kesehatan keluarga, hemat dibanding galon, kerak di keran.',x:'Ada 2 iklan yang dapat chat dengan biaya di bawah target.'},
+{n:'Optimization',k:'Konten pemenang dibuat versi baru: pembuka beda, durasi beda, thumbnail beda.',a:'Kelompok yang mahal dimatikan. Iklan ulang ke yang sudah buka web, lalu cari orang yang mirip pembeli.',g:'Fokus ke 2–3 sudut pesan yang paling banyak menghasilkan chat. Sisanya dimatikan.',x:'Biaya per chat stabil 1–2 minggu dan sudah ada yang beli.'},
+{n:'Scale up',k:'Produksi rutin dari pola pemenang. Video kreator terbaik ikut dijadikan iklan.',a:'Buka kota dan area baru. Target diperluas pelan-pelan.',g:'Sudut pesan pemenang dipakai ke produk lain, masing-masing dengan landing page sendiri.',x:'Budget naik 20–30% bertahap. Kalau biaya per chat mulai naik, ide baru masuk testing lagi.'}];
+var LN=[{n:'Konten',sb:'video, foto, format',c:12,cols:6,r:7,sp:22,w:[2,7,10]},{n:'Audience & targeting',sb:'siapa yang melihat iklan',c:4,cols:4,r:10,sp:34,w:[1,3]},{n:'Angle ads',sb:'sudut pesan iklan',c:6,cols:6,r:8,sp:27,w:[0,4]}];
+function T(x,y,t,a){var e=el('text',Object.assign({x:x,y:y},a||{}));e.textContent=t;return e;}
+function grid(n,cols,cx,cy,sp){var rows=Math.ceil(n/cols),o=[];for(var i=0;i<n;i++){var r=Math.floor(i/cols),c=i%cols;o.push([cx-(cols-1)*sp/2+c*sp,cy-(rows-1)*sp/2+r*sp]);}return o;}
+function G(){var g=el('g',{class:'fg'});svg.appendChild(g);return g;}
+// column highlight
+var hl=CX.map(function(cx){var r=el('rect',{x:cx-128,y:34,width:256,height:334,rx:14,fill:OR,'fill-opacity':0});svg.appendChild(r);return r;});
+// lanes
+LN.forEach(function(l,i){var y=LY[i];if(i)svg.appendChild(el('line',{x1:0,x2:1200,y1:y-41,y2:y-41,stroke:LINE}));
+svg.appendChild(T(0,y-2,l.n,{'font-size':16,'font-weight':600,fill:INK}));svg.appendChild(T(0,y+17,l.sb,{'font-size':12.5,fill:MUTED}));});
+svg.appendChild(el('line',{x1:0,x2:1200,y1:331,y2:331,stroke:LINE}));
+svg.appendChild(T(0,354,'Budget',{'font-size':16,'font-weight':600,fill:INK}));
+// loop arrow
+var gL=G();gL.appendChild(el('path',{d:'M'+CX[2]+',44 C'+CX[2]+',10 '+CX[0]+',10 '+CX[0]+',44',fill:'none',stroke:OR,'stroke-width':1.6,'stroke-dasharray':'5 5'}));
+gL.appendChild(el('path',{d:'M'+(CX[0]-6)+',36 L'+CX[0]+',45 L'+(CX[0]+6)+',36',fill:'none',stroke:OR,'stroke-width':1.8}));
+gL.appendChild(T((CX[0]+CX[2])/2,13,'ide baru masuk testing lagi',{'text-anchor':'middle','font-size':12.5,'font-weight':500,fill:OR}));
+// phase headers
+var hd=[];PH.forEach(function(p,i){var g=el('g',{class:'ph'});var r=el('rect',{x:CX[i]-112,y:46,width:224,height:38,rx:19,fill:'none',stroke:INK,'stroke-width':1.2});g.appendChild(r);
+var t=T(CX[i],70,(i+1)+'. '+p.n,{'text-anchor':'middle','font-size':16,'font-weight':600,fill:INK});g.appendChild(t);svg.appendChild(g);hd.push([r,t]);
+if(i<2){svg.appendChild(el('path',{d:'M'+(CX[i]+120)+',65 L'+(CX[i+1]-122)+',65',stroke:MUTE,'stroke-width':1.5}));svg.appendChild(el('path',{d:'M'+(CX[i+1]-130)+',59 L'+(CX[i+1]-122)+',65 L'+(CX[i+1]-130)+',71',fill:'none',stroke:MUTE,'stroke-width':1.5}));}});
+// phase groups
+var gT=G(),c1=G(),gO=G(),c2=G(),gS=G();
+LN.forEach(function(l,i){var y=LY[i],pt=grid(l.c,l.cols,CX[0],y,l.sp),po=grid(l.c,l.cols,CX[1],y,l.sp);
+pt.forEach(function(q){gT.appendChild(el('circle',{cx:q[0],cy:q[1],r:l.r,fill:INK}));});
+po.forEach(function(q,j){var win=l.w.indexOf(j)>=0;gO.appendChild(el('circle',{cx:q[0],cy:q[1],r:win?l.r+1.5:l.r-2,fill:win?OR:MUTE,'fill-opacity':win?1:.55}));});
+var tR=CX[0]+(l.cols-1)*l.sp/2+l.r+10,oL=CX[1]-(l.cols-1)*l.sp/2-l.r-10,oR=CX[1]+(l.cols-1)*l.sp/2+l.r+10,sL=CX[2]-80;c1.appendChild(el('path',{d:'M'+tR+','+y+' L'+oL+','+y,stroke:MUTE,'stroke-width':1.6}));c1.appendChild(el('path',{d:'M'+(oL-7)+','+(y-5)+' L'+oL+','+y+' L'+(oL-7)+','+(y+5),fill:'none',stroke:MUTE,'stroke-width':1.6}));c2.appendChild(el('path',{d:'M'+oR+','+y+' L'+sL+','+y,stroke:OR,'stroke-width':1.6}));c2.appendChild(el('path',{d:'M'+(sL-7)+','+(y-5)+' L'+sL+','+y+' L'+(sL-7)+','+(y+5),fill:'none',stroke:OR,'stroke-width':1.6}));
+if(i===0){grid(10,5,CX[2]+10,y,26).forEach(function(q){gS.appendChild(el('circle',{cx:q[0],cy:q[1],r:9,fill:OR}));});}
+if(i===1){[CX[2]-30,CX[2]+50].forEach(function(x){[34,22].forEach(function(rr){gS.appendChild(el('circle',{cx:x,cy:y,r:rr,fill:'none',stroke:OR,'stroke-opacity':rr>30?.25:.45,'stroke-width':1.5}));});gS.appendChild(el('circle',{cx:x,cy:y,r:12,fill:OR}));});}
+if(i===2){[CX[2]-30,CX[2]+50].forEach(function(x){[[-26,-22],[30,-14],[4,28]].forEach(function(d){gS.appendChild(el('line',{x1:x,y1:y,x2:x+d[0],y2:y+d[1],stroke:OR,'stroke-opacity':.5,'stroke-width':1.4}));gS.appendChild(el('circle',{cx:x+d[0],cy:y+d[1],r:5,fill:OR,'fill-opacity':.7}));});gS.appendChild(el('circle',{cx:x,cy:y,r:12,fill:OR}));});}
+});
+// budget bars
+[[56,MUTE,'kecil, dibagi rata'],[110,INK,'dipindah ke pemenang'],[165,OR,'naik bertahap']].forEach(function(b,i){var g=[gT,gO,gS][i];
+g.appendChild(el('rect',{x:CX[i]-112,y:344,width:b[0],height:12,rx:6,fill:b[1]}));g.appendChild(T(CX[i]-112+b[0]+8,355,b[2],{'font-size':12.5,fill:MUTED}));});
+// hit areas
+CX.forEach(function(cx,i){var h=el('rect',{x:cx-128,y:34,width:256,height:334,fill:'transparent',class:'ph'});h.onclick=function(){pick(i);};svg.appendChild(h);});
+function pick(i){sel=i;hl.forEach(function(r,j){r.setAttribute('fill-opacity',j===i?.05:0);});hd.forEach(function(h,j){h[0].setAttribute('fill',j===i?OR:'none');h[0].setAttribute('stroke',j===i?OR:INK);h[1].setAttribute('fill',j===i?'#fff':INK);});
+var p=PH[i];det.innerHTML='<div><div class="h">Konten</div><div class="x">'+p.k+'</div></div><div><div class="h">Audience & targeting</div><div class="x">'+p.a+'</div></div><div><div class="h">Angle ads</div><div class="x">'+p.g+'</div></div><div class="fnx"><div class="h">Lanjut kalau</div><div class="x">'+p.x+'</div></div>';}
+pick(0);
+var seq=[gT,c1,gO,c2,gS,gL];
+whenVisible('svgFlow',function(){seq.forEach(function(g){g.style.transition='none';g.style.opacity=0;g.style.transform='translateX(-14px)';});void svg.getBoundingClientRect();
+seq.forEach(function(g,k){setTimeout(function(){g.style.transition='';g.style.opacity=1;g.style.transform='none';},80+k*320);});});})();
+</script>
+</body>
+</html>
